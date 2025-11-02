@@ -1,6 +1,9 @@
 import { useRef, type FormEvent } from "react";
-
+import { useNavigate } from 'react-router-dom';
+import { apiCall } from './webrq';
 export function Launch() {
+  const navigate = useNavigate();
+
   const responseInputRef = useRef<HTMLTextAreaElement>(null);
 
   const testEndpoint = async (e: FormEvent<HTMLFormElement>) => {
@@ -9,13 +12,15 @@ export function Launch() {
     try {
       const form = e.currentTarget;
       const formData = new FormData(form);
-      const endpoint = "/api/board/:" + formData.get("endpoint") as string;
-      const url = new URL(endpoint, location.href);
-      const method = formData.get("method") as string;
-      const res = await fetch(url, { method });
+      const endpoint = "api/board/" + formData.get("endpoint") as string;
+      const method: "GET"|"POST" = formData.get("method") as "GET"|"POST";
 
-      const data = await res.json();
-      responseInputRef.current!.value = JSON.stringify(data, null, 2);
+      let txt = await apiCall(method, endpoint)
+      responseInputRef.current!.value = JSON.stringify(txt)
+      navigate("/board")
+      console.log("hi")
+    
+  
     } catch (error) {
       responseInputRef.current!.value = String(error);
     }

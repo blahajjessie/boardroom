@@ -1,19 +1,22 @@
 import { APITester } from "./APITester";
-import { Launch } from "./launcher";
+import { Home } from "./Home";
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import "./index.css";
-
+import { BoardPage } from "./BoardPage";
 
 
 export function App() {
   return (
-    <div className="max-w-7xl mx-auto p-8 text-center relative z-10">
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/board/*" element={<BoardPage />} />
+    
+      </Routes>
+    </Router>
 
-
-      <h1 className="text-5xl font-bold my-4 leading-tight">Launch a board</h1>
-
-      <Launch/>
-    </div>
   );
 }
 

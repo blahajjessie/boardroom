@@ -3,24 +3,27 @@ import {Board} from "./board.ts"
 import { idAbsent, idPresent } from "./helpers.ts";
 
 import index from "./index.html";
+import board from "./board.html";
+
 var boards:Board[] = []
 
 const server = serve({
   routes: {
     // Serve index.html for all unmatched routes.
-    "/*": index,
+    "/" : index,
 
     "/api/board/:id": {
       async GET(req) {
+        console.log(req)
       const id = req.params.id;
       if (idAbsent( id, boards)){ // non existent id
           return Response.json({
-            message: "Requested board does not exist. Try creating it!",
+          message: "Requested board does not exist. Try creating it!",
           method: "GET",
         }, {status: 404});
       }
       else{
-        return Response.redirect("/boards/" + id)
+        return Response.json({message:req.params.id}, {status:200})
       }
 
       },
@@ -33,7 +36,11 @@ const server = serve({
         }, {status: 409});
       }
       else{
-        return Response.redirect("/boards/" + id)
+        //return Response.redirect("/boards/" + id)
+        boards.push(new Board(id))
+        return Response.json({
+          message: " Created",
+        }, {status: 201})
       }
     }
     },
@@ -53,13 +60,7 @@ const server = serve({
       },
     },
 
-    "/board/:id": {
-      async GET(req){
-        console.log("hi")
-        const name = req.params.id;
-        return new Response(Bun.file("/boardPage"));
-      }
-    }
+    "/board/:id": board
   },
 
   development: process.env.NODE_ENV !== "production" && {
