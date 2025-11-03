@@ -1,9 +1,11 @@
 import { serve } from "bun";
-import {Board} from "./board.ts"
-import { idAbsent, idPresent } from "./helpers.ts";
+import {Board} from "./BoardLib/board.ts"
+import { idAbsent, idPresent } from "./BoardLib/helpers.ts";
 
 import index from "./index.html";
-import board from "./board.html";
+import err from "./err.html";
+
+
 
 var boards:Board[] = []
 
@@ -36,7 +38,6 @@ const server = serve({
         }, {status: 409});
       }
       else{
-        //return Response.redirect("/boards/" + id)
         boards.push(new Board(id))
         return Response.json({
           message: " Created",
@@ -60,7 +61,10 @@ const server = serve({
       },
     },
 
-    "/board/:id": board
+    // let react handle this... ping the server and kick the user out of non existent boards.
+    "/board/:id" :index,
+    // "404" page
+    "/*":err
   },
 
   development: process.env.NODE_ENV !== "production" && {
